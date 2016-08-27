@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -42,7 +44,9 @@ public class FaceDetect extends View {
     }
 
     public void setBitmap( Bitmap bitmap ) {
-        mBitmap = bitmap;
+
+        mBitmap = this.toGrayscale(bitmap);
+
         FaceDetector detector = new FaceDetector.Builder( getContext() )
                 .setTrackingEnabled(true)
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
@@ -104,5 +108,22 @@ public class FaceDetect extends View {
 
             canvas.drawRect( left, top, right, bottom, paint );
         }
+    }
+
+    public Bitmap toGrayscale(Bitmap bmpOriginal)
+    {
+        int width, height;
+        height = bmpOriginal.getHeight();
+        width = bmpOriginal.getWidth();
+
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bmpOriginal, 0, 0, paint);
+        return bmpGrayscale;
     }
 }
